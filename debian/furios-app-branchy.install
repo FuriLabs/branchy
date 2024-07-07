@@ -1,0 +1,4 @@
+branchy /usr/lib/branchy
+main.py /usr/lib/branchy
+data/io.furios.Branchy.desktop /usr/share/applications
+data/io.furios.Branchy.svg /usr/share/icons/hicolor/scalable/apps

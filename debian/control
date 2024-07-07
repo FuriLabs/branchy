@@ -1,0 +1,18 @@
+Source: furios-app-branchy
+Maintainer: Jesús Higueras <jesus@furilabs.com>
+Section: misc
+Priority: optional
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3
+Standards-Version: 4.5.1
+Vcs-Browser: https://github.com/furilabs/branchy
+Vcs-Git: https://github.com/furilabs/branchy.git
+
+Package: furios-app-branchy
+Architecture: all
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends},
+         python3-aiohttp,
+         gir1.2-packagekitglib-1.0
+Description: Feature branch management app for FuriOS

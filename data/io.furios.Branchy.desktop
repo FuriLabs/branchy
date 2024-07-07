@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Branchy
+Exec=io.furios.Branchy
+Icon=io.furios.Branchy
+Terminal=false
+Type=Application
+Categories=Development;Settings;
+StartupNotify=true
+Keywords=branchy;furios;update;beta;feature;test;
