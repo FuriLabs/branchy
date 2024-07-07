@@ -13,6 +13,5 @@ Package: furios-app-branchy
 Architecture: all
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends},
-         python3-aiohttp,
-         gir1.2-packagekitglib-1.0
+         python3-aiohttp
 Description: Feature branch management app for FuriOS
