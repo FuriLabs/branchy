@@ -71,11 +71,11 @@ def get_enabled_branches(app) -> Dict[str, str]:
     return enabled_branches
 
 
-async def run_process(args: list[str], output_stream_callback: callable = None) -> tuple[subprocess.Process, str]:
+async def run_process(args: list[str], output_stream_callback: callable = None, ignore_stderr: bool = False) -> tuple[subprocess.Process, str]:
     process = await create_subprocess_exec(
         *args,
         stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT
+        stderr=subprocess.STDOUT if not ignore_stderr else subprocess.DEVNULL
     )
 
     output = []
@@ -169,9 +169,6 @@ async def generate_apt_install_commands(app) -> str:
 
 
 async def get_installed_package_versions(filter: list[str] = []) -> Dict[str, str]:
-    process, output = await run_process(['dpkg-query', '-f', '${binary:Package} ${Version}\n', '-W', *filter])
-
-    if process.returncode != 0:
-        raise Exception(f"Error getting installed packages: {output}")
+    process, output = await run_process(['dpkg-query', '-f', '${binary:Package} ${Version}\n', '-W', *filter], ignore_stderr=True)
 
     return dict(line.split(' ', 1) for line in output.strip().split('\n'))
