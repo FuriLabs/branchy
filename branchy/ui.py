@@ -144,7 +144,13 @@ def update_ui(app):
             repo_card.add(row)
 
     app.changed_branches = {}
-    app.apply_button.set_sensitive(False)
+
+    # If branches got removed from the server, enabled_branches won't match initial_branches. Detect that and add them to changed_branches.
+    for repo, branch in app.initial_branches.items():
+        if repo not in app.enabled_branches or branch not in app.enabled_branches[repo]:
+            app.changed_branches[repo] = (branch, None)
+
+    app.apply_button.set_sensitive(not not app.changed_branches)
 
 
 def setup_progress_dialog(app, title) -> tuple[Adw.Dialog, Gtk.Label, Gtk.TextView, Gtk.Button]:

@@ -29,7 +29,7 @@ async def refresh_branches(app):
     for repo, branch in app.enabled_branches.items():
         if repo not in app.repositories or branch not in (x.name for x in app.repositories[repo].branches):
             new_enabled_branches.pop(repo)
-    
+
     app.enabled_branches = new_enabled_branches
 
 
