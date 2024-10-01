@@ -24,6 +24,14 @@ async def refresh_branches(app):
     app.enabled_branches = get_enabled_branches(app)
     app.initial_branches = app.enabled_branches.copy()
 
+    # If there are branches that we had enabled that no longer exist, disable them
+    new_enabled_branches = app.enabled_branches.copy()
+    for repo, branch in app.enabled_branches.items():
+        if repo not in app.repositories or branch not in (x.name for x in app.repositories[repo].branches):
+            new_enabled_branches.pop(repo)
+    
+    app.enabled_branches = new_enabled_branches
+
 
 def parse_branches(app, data: str):
     lines = data.strip().split('\n')
@@ -171,4 +179,13 @@ async def generate_apt_install_commands(app) -> str:
 async def get_installed_package_versions(filter: list[str] = []) -> Dict[str, str]:
     process, output = await run_process(['dpkg-query', '-f', '${binary:Package} ${Version}\n', '-W', *filter], ignore_stderr=True)
 
-    return dict(line.split(' ', 1) for line in output.strip().split('\n'))
+    versions = {}
+    for line in output.strip().split('\n'):
+        parts = line.split(' ')
+        if len(parts) < 2:
+            continue
+
+        package, version = line.split(' ', 1)
+        versions[package] = version
+
+    return versions
