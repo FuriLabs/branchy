@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.furios.Branchy</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Branchy</name>
+  <summary>Switch to feature branches easily</summary>
+  <description>
+    <p>
+        Feature branch management app for FuriOS
+    </p>
+    <ul>
+      <li>Allow to switch to development and feature branches in FuriOS</li>
+    </ul>
+  </description>
+  <kudos>
+    <kudo>HiDpiIcon</kudo>
+    <kudo>HighContrast</kudo>
+    <kudo>ModernToolkit</kudo>
+    <kudo>Notifications</kudo>
+    <kudo>SearchProvider</kudo>
+    <kudo>UserDocs</kudo>
+  </kudos>
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </recommends>
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  <releases>
+    <release version="1.0.2" date="2024-11-30">
+      <description>
+        <p>A new release of Branchy</p>
+        <ul>
+          <li>Add Appstream metadata</li>
+        </ul>
+      </description>
+    </release>
+    <release version="1.0.0" date="2024-07-10">
+      <description>
+        <p>A new release of Branchy</p>
+        <ul>
+          <li>Initial implementation</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+  <url type="homepage">https://furilabs.com/</url>
+  <url type="contribute">https://github.com/furilabs/branchy/</url>
+  <url type="bugtracker">https://github.com/FuriLabs/branchy/issues</url>
+  <launchable type="desktop-id">io.furios.Branchy.desktop</launchable>
+  <!-- developer_name tag deprecated with Appstream 1.0 -->
+  <developer_name>FuriLabs</developer_name>
+  <developer id="io.furios">
+    <name>FuriLabs</name>
+  </developer>
+  <project_group>FuriOS</project_group>
+  <content_rating type="oars-1.0" />
+</component>
