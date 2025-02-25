@@ -7,7 +7,7 @@ from collections import OrderedDict
 from datetime import datetime
 
 from .repository import Repository, Branch
-from .utils import validate_branch_data, SOURCES_DIR, BRANCH_LIST_URL, ENABLED_BRANCHES_NAME, CODENAME, DEB_URL_TEMPLATE
+from .utils import validate_branch_data, SOURCES_DIR, BRANCH_LIST_URL, LEGACY_ENABLED_BRANCHES_NAME, ENABLED_BRANCHES_NAME, CODENAME, DEB_URL_TEMPLATE, SOURCES_TEMPLATE, REPO_SIGNATURE_KEY
 
 
 async def refresh_branches(app):
@@ -61,16 +61,16 @@ def get_enabled_branches(app) -> Dict[str, str]:
     enabled_branches = {}
     app.system_branches = {}
     for filename in listdir(SOURCES_DIR):
-        if filename.endswith('.list'):
+        if filename.endswith('.list') or filename.endswith('.sources'):
             try:
                 with open(path.join(SOURCES_DIR, filename), 'r') as f:
                     for line in f:
-                        if line.startswith('deb '):
+                        if line.startswith('deb ') or line.startswith('Uris: '):
                             match = search(DEB_URL_TEMPLATE.format(repo='(.+)', codename=CODENAME, branch='(.+)'), line)
                             if match:
                                 repo = match.group(1)
                                 branch = match.group(2)
-                                if filename == ENABLED_BRANCHES_NAME:
+                                if filename == LEGACY_ENABLED_BRANCHES_NAME or filename == ENABLED_BRANCHES_NAME:
                                     enabled_branches[repo] = branch
                                 else:
                                     app.system_branches[repo] = (branch, filename)
@@ -134,6 +134,7 @@ async def generate_update_script(app) -> str:
     return f"""#!/bin/bash
 set -e
 
+rm -f {SOURCES_DIR}/{LEGACY_ENABLED_BRANCHES_NAME} || true
 cat << EOF > {SOURCES_DIR}/{ENABLED_BRANCHES_NAME}
 {get_sources(app)}
 EOF
@@ -149,8 +150,8 @@ def get_sources(app) -> str:
     for repo, branch in app.enabled_branches.items():
         if app.system_branches.get(repo) and branch == app.system_branches[repo][0]:
             continue
-        content.append(f"deb {DEB_URL_TEMPLATE.format(repo=repo, codename=CODENAME, branch=branch)} {CODENAME} main")
-    return '\n'.join(content)
+        content.append(f"{SOURCES_TEMPLATE.format(repo=repo, codename=CODENAME, branch=branch, signature_key=REPO_SIGNATURE_KEY)}")
+    return '\n\n'.join(content)
 
 
 async def generate_apt_install_commands(app) -> str:

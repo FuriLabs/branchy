@@ -4,9 +4,16 @@ from gi.repository import Adw
 
 SOURCES_DIR = '/etc/apt/sources.list.d'
 BRANCH_LIST_URL = 'http://repo.furios.io/get-branches'
-ENABLED_BRANCHES_NAME = 'experiments.list'
+LEGACY_ENABLED_BRANCHES_NAME = 'experiments.list'
+ENABLED_BRANCHES_NAME = 'experiments.sources'
 CODENAME = 'trixie'
 DEB_URL_TEMPLATE = 'http://furilabs-{repo}.repo.furios.io/{codename}-{branch}/'
+SOURCES_TEMPLATE = '''Components: main
+Suites: {codename}
+Uris: http://furilabs-{repo}.repo.furios.io/{codename}-{branch}/
+Types: deb
+Signed-By: {signature_key}'''
+REPO_SIGNATURE_KEY = '/etc/apt/trusted.gpg.d/furilabs.gpg'
 
 
 def validate_branch_data(repo: str, branch: str, packages: list[str], version: str):
