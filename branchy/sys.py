@@ -65,7 +65,7 @@ def get_enabled_branches(app) -> Dict[str, str]:
             try:
                 with open(path.join(SOURCES_DIR, filename), 'r') as f:
                     for line in f:
-                        if line.startswith('deb ') or line.startswith('Uris: '):
+                        if line.startswith('deb ') or line.lower().startswith('uris: '):
                             match = search(DEB_URL_TEMPLATE.format(repo='(.+)', codename=CODENAME, branch='(.+)'), line)
                             if match:
                                 repo = match.group(1)
