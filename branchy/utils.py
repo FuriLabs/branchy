@@ -6,7 +6,7 @@ SOURCES_DIR = '/etc/apt/sources.list.d'
 BRANCH_LIST_URL = 'http://repo.furios.io/get-branches'
 LEGACY_ENABLED_BRANCHES_NAME = 'experiments.list'
 ENABLED_BRANCHES_NAME = 'experiments.sources'
-CODENAME = 'trixie'
+CODENAME = 'forky'
 DEB_URL_TEMPLATE = 'http://furilabs-{repo}.repo.furios.io/{codename}-{branch}/'
 SOURCES_TEMPLATE = '''Components: main
 Suites: {codename}
