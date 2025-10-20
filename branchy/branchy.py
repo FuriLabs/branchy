@@ -20,6 +20,8 @@ class BranchyApp(Adw.Application):
         self.initial_branches: Dict[str, str] = {}
         self.system_branches: Dict[str, Tuple[str, str]] = {}
         self.installed_versions: Dict[str, str] = {}
+        self.had_stale_branches = False
+        self.showed_stale_warning = False
 
     def clear(self):
         self.repositories.clear()
@@ -46,6 +48,22 @@ class BranchyApp(Adw.Application):
             self.installed_versions = await get_installed_package_versions()
             await refresh_branches(self)
             self.update_ui()
+            if self.had_stale_branches and not self.showed_stale_warning:
+                dialog = Adw.MessageDialog(
+                    transient_for=self.win,
+                    heading="Stale Branches Detected",
+                    body="Your previous Branchy configuration contains branches that no longer exist or are no longer compatible. Branchy will automatically remove them next time you apply changes in order to avoid compatibility issues. Do you want Branchy to clean them up now?",
+                )
+
+                dialog.add_response("cancel", "Nah")
+                dialog.add_response("install", "Get ’em off me!")
+                dialog.set_response_appearance("install", Adw.ResponseAppearance.SUGGESTED)
+
+                dialog.connect('response', self.on_apply_response)
+                dialog.present()
+
+                self.showed_stale_warning = True
+
         except Exception as e:
             self.show_results("Uh oh", f"Error refreshing branches: {str(e)}")
 
