@@ -28,6 +28,7 @@ async def refresh_branches(app):
     new_enabled_branches = app.enabled_branches.copy()
     for repo, branch in app.enabled_branches.items():
         if repo not in app.repositories or branch not in (x.name for x in app.repositories[repo].branches):
+            app.had_stale_branches = True
             new_enabled_branches.pop(repo)
 
     app.enabled_branches = new_enabled_branches
@@ -66,14 +67,18 @@ def get_enabled_branches(app) -> Dict[str, str]:
                 with open(path.join(SOURCES_DIR, filename), 'r') as f:
                     for line in f:
                         if line.startswith('deb ') or line.lower().startswith('uris: '):
-                            match = search(DEB_URL_TEMPLATE.format(repo='(.+)', codename=CODENAME, branch='(.+)'), line)
+                            match = search(DEB_URL_TEMPLATE.format(repo='(.+)', codename='(.+?)', branch='(.+)'), line)
                             if match:
                                 repo = match.group(1)
-                                branch = match.group(2)
-                                if filename == LEGACY_ENABLED_BRANCHES_NAME or filename == ENABLED_BRANCHES_NAME:
-                                    enabled_branches[repo] = branch
+                                codename = match.group(2)
+                                branch = match.group(3)
+                                if codename != CODENAME:
+                                    app.had_stale_branches = True
                                 else:
-                                    app.system_branches[repo] = (branch, filename)
+                                    if filename == LEGACY_ENABLED_BRANCHES_NAME or filename == ENABLED_BRANCHES_NAME:
+                                        enabled_branches[repo] = branch
+                                    else:
+                                        app.system_branches[repo] = (branch, filename)
             except IOError as e:
                 print(f"Error reading {filename}: {e}")
     return enabled_branches
@@ -104,7 +109,7 @@ async def run_process(args: list[str], output_stream_callback: callable = None, 
 
 
 async def apply_changes(app, output_stream_callback: callable = None):
-    if not app.changed_branches:
+    if not app.changed_branches and not app.had_stale_branches:
         return
 
     script_content = await generate_update_script(app)
